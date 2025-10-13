@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "651153251065",
+    "project_id": "bloom-mama",
+    "storage_bucket": "bloom-mama.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:651153251065:android:793a72384acdc139b0a028",
+        "android_client_info": {
+          "package_name": "com.example.bloom_mama"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "651153251065-qjiiqtv6jtkubdfnt8a66kmamfh014oi.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.bloom_mama",
+            "certificate_hash": "f5c7585b0552b155d5767fed0146b20583412358"
+          }
+        },
+        {
+          "client_id": "651153251065-jojlnkbvfv3dd4u410jfu3aqpqcnhdt0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDnpMDXeJe81jNyratbFj90YUUakg42v50"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "651153251065-jojlnkbvfv3dd4u410jfu3aqpqcnhdt0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
