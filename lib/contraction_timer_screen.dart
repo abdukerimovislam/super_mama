@@ -2,15 +2,15 @@
 
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'l10n/app_localizations.dart'; // Import localizations
 
-// A simple class to hold the data for a single contraction
 class Contraction {
   final DateTime startTime;
   final DateTime endTime;
 
   Contraction({required this.startTime, required this.endTime});
 
-  // A calculated property to get the duration
   Duration get duration => endTime.difference(startTime);
 }
 
@@ -32,17 +32,13 @@ class _ContractionTimerScreenState extends State<ContractionTimerScreen> {
     setState(() {
       _isTiming = !_isTiming;
       if (_isTiming) {
-        // Start of a new contraction
         _contractionStartTime = DateTime.now();
         _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-          if (mounted) { // Check if the widget is still in the tree
-            setState(() {
-              _secondsElapsed++;
-            });
+          if (mounted) {
+            setState(() => _secondsElapsed++);
           }
         });
       } else {
-        // End of the contraction
         _timer?.cancel();
         if (_contractionStartTime != null) {
           _contractions.insert(0, Contraction(
@@ -66,20 +62,11 @@ class _ContractionTimerScreenState extends State<ContractionTimerScreen> {
     });
   }
 
-  // Helper function to format duration as MM:SS
   String _formatDuration(Duration d) {
     String twoDigits(int n) => n.toString().padLeft(2, '0');
     String twoDigitMinutes = twoDigits(d.inMinutes.remainder(60));
     String twoDigitSeconds = twoDigits(d.inSeconds.remainder(60));
     return "$twoDigitMinutes:$twoDigitSeconds";
-  }
-
-  // Helper function to format time as H:MM AM/PM
-  String _formatTime(DateTime dt) {
-    final hour = dt.hour > 12 ? dt.hour - 12 : (dt.hour == 0 ? 12 : dt.hour);
-    final minute = dt.minute.toString().padLeft(2, '0');
-    final period = dt.hour >= 12 ? 'PM' : 'AM';
-    return '$hour:$minute $period';
   }
 
   @override
@@ -90,15 +77,17 @@ class _ContractionTimerScreenState extends State<ContractionTimerScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Contraction Timer'),
+        title: Text(loc.contractionTimerTitle), // <-- Localized
         backgroundColor: Colors.deepPurple[200],
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
             onPressed: _resetTimer,
-            tooltip: 'Reset',
+            tooltip: loc.contractionTimerResetTooltip, // <-- Localized
           ),
         ],
       ),
@@ -124,7 +113,7 @@ class _ContractionTimerScreenState extends State<ContractionTimerScreen> {
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                     ),
                     child: Text(
-                      _isTiming ? 'Stop Contraction' : 'Start Contraction',
+                      _isTiming ? loc.contractionTimerStop : loc.contractionTimerStart, // <-- Localized
                       style: const TextStyle(fontSize: 20),
                     ),
                   ),
@@ -134,7 +123,7 @@ class _ContractionTimerScreenState extends State<ContractionTimerScreen> {
           ),
           Expanded(
             child: _contractions.isEmpty
-                ? const Center(child: Text('Start timing your first contraction.'))
+                ? Center(child: Text(loc.contractionTimerEmptyState)) // <-- Localized
                 : ListView.builder(
               itemCount: _contractions.length,
               itemBuilder: (context, index) {
@@ -149,9 +138,9 @@ class _ContractionTimerScreenState extends State<ContractionTimerScreen> {
 
                 return ListTile(
                   leading: CircleAvatar(child: Text('${_contractions.length - index}')),
-                  title: Text('Duration: ${_formatDuration(contraction.duration)}'),
-                  subtitle: Text('Frequency: $frequency'),
-                  trailing: Text(_formatTime(contraction.startTime)),
+                  title: Text(loc.contractionTimerDuration(_formatDuration(contraction.duration))), // <-- Localized
+                  subtitle: Text(loc.contractionTimerFrequency(frequency)), // <-- Localized
+                  trailing: Text(DateFormat.jm(Localizations.localeOf(context).toString()).format(contraction.startTime)), // <-- Locale-aware time
                 );
               },
             ),

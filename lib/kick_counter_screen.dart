@@ -1,7 +1,8 @@
 // --- kick_counter_screen.dart ---
 
-import 'dart:async'; // We need this for the Timer
+import 'dart:async';
 import 'package:flutter/material.dart';
+import 'l10n/app_localizations.dart'; // Import the localizations
 
 class KickCounterScreen extends StatefulWidget {
   const KickCounterScreen({super.key});
@@ -11,67 +12,58 @@ class KickCounterScreen extends StatefulWidget {
 }
 
 class _KickCounterScreenState extends State<KickCounterScreen> {
-  // --- STATE VARIABLES ---
   int _kickCount = 0;
   final Stopwatch _stopwatch = Stopwatch();
-  Timer? _timer; // The '?' means it can be null
+  Timer? _timer;
   String _elapsedTime = '00:00:00';
   bool _isCounting = false;
 
-  // --- LOGIC FUNCTIONS ---
   void _startStopwatch() {
-    setState(() {
-      _isCounting = true;
-    });
+    setState(() => _isCounting = true);
     _stopwatch.start();
-    // This timer updates the UI every second to show the elapsed time.
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      setState(() {
-        _elapsedTime = _formatTime(_stopwatch.elapsed);
-      });
+      if (mounted) {
+        setState(() => _elapsedTime = _formatTime(_stopwatch.elapsed));
+      }
     });
   }
 
   void _stopStopwatch() {
-    setState(() {
-      _isCounting = false;
-    });
+    setState(() => _isCounting = false);
     _stopwatch.stop();
-    _timer?.cancel(); // Stop the timer from running
+    _timer?.cancel();
   }
 
   void _resetCounter() {
     _stopStopwatch();
     _stopwatch.reset();
-    setState(() {
-      _kickCount = 0;
-      _elapsedTime = '00:00:00';
-    });
+    if (mounted) {
+      setState(() {
+        _kickCount = 0;
+        _elapsedTime = '00:00:00';
+      });
+    }
   }
 
   void _recordKick() {
     if (!_isCounting) {
       _startStopwatch();
     }
-    setState(() {
-      _kickCount++;
-    });
+    setState(() => _kickCount++);
 
     if (_kickCount == 10) {
       _stopStopwatch();
-      // Show a confirmation dialog
+      final loc = AppLocalizations.of(context)!; // Get localizations for the dialog
       showDialog(
         context: context,
-        builder: (BuildContext context) {
+        builder: (BuildContext dialogContext) {
           return AlertDialog(
-            title: const Text('Goal Reached!'),
-            content: Text('You counted 10 kicks in $_elapsedTime.'),
+            title: Text(loc.kickCounterGoalReached), // <-- Localized
+            content: Text(loc.kickCounterGoalMessage(_elapsedTime)), // <-- Localized with variable
             actions: <Widget>[
               TextButton(
-                child: const Text('OK'),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
+                child: Text(loc.ok), // <-- Localized
+                onPressed: () => Navigator.of(dialogContext).pop(),
               ),
             ],
           );
@@ -80,7 +72,6 @@ class _KickCounterScreenState extends State<KickCounterScreen> {
     }
   }
 
-  // Helper function to format the time nicely
   String _formatTime(Duration duration) {
     String twoDigits(int n) => n.toString().padLeft(2, '0');
     String twoDigitMinutes = twoDigits(duration.inMinutes.remainder(60));
@@ -88,22 +79,21 @@ class _KickCounterScreenState extends State<KickCounterScreen> {
     return "${twoDigits(duration.inHours)}:$twoDigitMinutes:$twoDigitSeconds";
   }
 
-  // This is called when the screen is closed, to prevent memory leaks.
   @override
   void dispose() {
     _timer?.cancel();
     super.dispose();
   }
 
-  // --- UI (BUILD METHOD) ---
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Kick Counter'),
+        title: Text(loc.kickCounterTitle), // <-- Localized
         backgroundColor: Colors.deepPurple[200],
         actions: [
-          // Add a reset button to the app bar
           IconButton(
             icon: const Icon(Icons.refresh),
             onPressed: _resetCounter,
@@ -116,10 +106,10 @@ class _KickCounterScreenState extends State<KickCounterScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              const Text(
-                'Tap the button below each time you feel a kick.',
+              Text(
+                loc.kickCounterInstructions, // <-- Localized
                 textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 18, color: Colors.grey),
+                style: const TextStyle(fontSize: 18, color: Colors.grey),
               ),
               const SizedBox(height: 30),
               Text(
@@ -127,18 +117,17 @@ class _KickCounterScreenState extends State<KickCounterScreen> {
                 style: const TextStyle(fontSize: 100, fontWeight: FontWeight.bold, color: Colors.deepPurple),
               ),
               Text(
-                _kickCount == 1 ? 'kick' : 'kicks',
+                loc.kickCounterKicks(_kickCount), // <-- Localized plural
                 style: const TextStyle(fontSize: 24, color: Colors.grey),
               ),
               const SizedBox(height: 20),
               Text(
-                'Time: $_elapsedTime',
+                loc.kickCounterTime(_elapsedTime), // <-- Localized with variable
                 style: const TextStyle(fontSize: 32),
               ),
               const SizedBox(height: 50),
-              // This is our main button
               SizedBox(
-                width: double.infinity, // Make button take full width
+                width: double.infinity,
                 height: 60,
                 child: ElevatedButton(
                   onPressed: _recordKick,
@@ -148,9 +137,9 @@ class _KickCounterScreenState extends State<KickCounterScreen> {
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  child: const Text(
-                    'Record Kick',
-                    style: TextStyle(fontSize: 20),
+                  child: Text(
+                    loc.kickCounterRecordKick, // <-- Localized
+                    style: const TextStyle(fontSize: 20),
                   ),
                 ),
               ),

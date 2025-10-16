@@ -1,43 +1,35 @@
-// --- login_screen.dart (final fixed for google_sign_in ^7.2.0) ---
+// --- login_screen.dart ---
 
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'main_navigator.dart';
+import 'package:super_mama/main_navigator.dart';
+import 'l10n/app_localizations.dart'; // Import the localizations
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
 
   Future<void> _signInWithGoogle(BuildContext context) async {
+    // Get the localizations object before the async gap
+    final loc = AppLocalizations.of(context)!;
+
     try {
-      // ✅ 1. Initialize the GoogleSignIn instance
       final GoogleSignIn googleSignIn = GoogleSignIn(
         scopes: ['email', 'profile'],
       );
-
-      // ✅ 2. Start the interactive sign-in process
       final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
 
       if (googleUser == null) {
-        // The user cancelled the sign-in
-        return;
+        return; // The user cancelled
       }
 
-      // ✅ 3. Obtain the auth details (tokens)
-      final GoogleSignInAuthentication googleAuth =
-      await googleUser.authentication;
-
-      // ✅ 4. Create a credential for Firebase
+      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
       final OAuthCredential credential = GoogleAuthProvider.credential(
         idToken: googleAuth.idToken,
         accessToken: googleAuth.accessToken,
       );
+      final UserCredential userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
 
-      // ✅ 5. Sign in to Firebase with the credential
-      final UserCredential userCredential =
-      await FirebaseAuth.instance.signInWithCredential(credential);
-
-      // ✅ 6. Navigate to main screen
       if (userCredential.user != null && context.mounted) {
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(builder: (context) => const MainNavigator()),
@@ -47,7 +39,7 @@ class LoginScreen extends StatelessWidget {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Google Sign-In failed: $e'),
+            content: Text(loc.signInError(e.toString())), // <-- Localized
           ),
         );
       }
@@ -56,6 +48,9 @@ class LoginScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Get the localized strings for the current language
+    final loc = AppLocalizations.of(context)!;
+
     return Scaffold(
       backgroundColor: Colors.deepPurple[200],
       body: Center(
@@ -66,9 +61,9 @@ class LoginScreen extends StatelessWidget {
             children: [
               const Icon(Icons.favorite, color: Colors.white, size: 80),
               const SizedBox(height: 20),
-              const Text(
-                'Welcome to Bloom Mama',
-                style: TextStyle(
+              Text(
+                loc.signInWelcome, // <-- Localized
+                style: const TextStyle(
                   fontSize: 32,
                   fontWeight: FontWeight.bold,
                   color: Colors.white,
@@ -77,14 +72,13 @@ class LoginScreen extends StatelessWidget {
               ),
               const SizedBox(height: 50),
               ElevatedButton.icon(
-                icon: Image.asset('assets/images/google_icon.png', height: 24.0),
-                label: const Text('Sign in with Google'),
+                icon: Image.asset('assets/images/google_icon.png', height: 24.0), // Corrected asset path
+                label: Text(loc.signInWithGoogle), // <-- Localized
                 onPressed: () => _signInWithGoogle(context),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.white,
                   foregroundColor: Colors.black,
-                  padding:
-                  const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                 ),
               ),
             ],

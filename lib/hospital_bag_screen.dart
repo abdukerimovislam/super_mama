@@ -1,8 +1,9 @@
 // --- hospital_bag_screen.dart ---
 
 import 'package:flutter/material.dart';
+import 'l10n/app_localizations.dart'; // Import the generated localizations
 
-// This is our blueprint for a single checklist item.
+// This class is unchanged
 class ChecklistItem {
   String title;
   bool isChecked;
@@ -18,53 +19,62 @@ class HospitalBagScreen extends StatefulWidget {
 }
 
 class _HospitalBagScreenState extends State<HospitalBagScreen> {
-  // This is our list of items. We'll pre-populate it with common suggestions.
-  final List<ChecklistItem> _items = [
-    ChecklistItem(title: 'ID and Insurance Card'),
-    ChecklistItem(title: 'Birth Plan (if you have one)'),
-    ChecklistItem(title: 'Phone and Charger (extra long cord!)'),
-    ChecklistItem(title: 'Comfortable Robe or Gown'),
-    ChecklistItem(title: 'Slippers and Non-skid Socks'),
-    ChecklistItem(title: 'Nursing Bra and Pads'),
-    ChecklistItem(title: 'Going-home Outfit for Mom'),
-    ChecklistItem(title: 'Lip Balm and Toiletries'),
-    ChecklistItem(title: 'Snacks and Drinks'),
-    ChecklistItem(title: 'Going-home Outfit for Baby'),
-    ChecklistItem(title: 'Installed Car Seat'),
-    ChecklistItem(title: 'Pillow from Home'),
-  ];
+  // We declare the list here, but we will initialize it later
+  List<ChecklistItem> _items = [];
+  bool _isInitialized = false;
+
+  // We use didChangeDependencies to safely access the context and AppLocalizations
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // This ensures the list is only initialized once
+    if (!_isInitialized) {
+      // Get the localized strings
+      final loc = AppLocalizations.of(context)!;
+      // Initialize the list using the localized strings
+      _items = [
+        ChecklistItem(title: loc.checklistItemID),
+        ChecklistItem(title: loc.checklistItemBirthPlan),
+        ChecklistItem(title: loc.checklistItemPhone),
+        ChecklistItem(title: loc.checklistItemRobe),
+        ChecklistItem(title: loc.checklistItemSlippers),
+        ChecklistItem(title: loc.checklistItemNursingBra),
+        ChecklistItem(title: loc.checklistItemOutfitMom),
+        ChecklistItem(title: loc.checklistItemToiletries),
+        ChecklistItem(title: loc.checklistItemSnacks),
+        ChecklistItem(title: loc.checklistItemOutfitBaby),
+        ChecklistItem(title: loc.checklistItemCarSeat),
+        ChecklistItem(title: loc.checklistItemPillow),
+      ];
+      _isInitialized = true;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Hospital Bag Checklist'),
+        // Use the localized title
+        title: Text(AppLocalizations.of(context)!.checklistTitle),
         backgroundColor: Colors.deepPurple[200],
       ),
-      // ListView.builder is the best way to display a long, scrollable list.
-      // It's very efficient because it only builds the items that are visible on screen.
       body: ListView.builder(
-        // The number of items in our list.
         itemCount: _items.length,
-        // The function that builds each item in the list.
         itemBuilder: (context, index) {
           final item = _items[index];
-          // CheckboxListTile is a perfect, pre-built widget for our needs.
           return CheckboxListTile(
             title: Text(
               item.title,
               style: TextStyle(
                 decoration: item.isChecked
-                    ? TextDecoration.lineThrough // Add a strikethrough if checked
+                    ? TextDecoration.lineThrough
                     : TextDecoration.none,
               ),
             ),
             value: item.isChecked,
-            // This function is called when the user taps the checkbox.
             onChanged: (bool? value) {
               setState(() {
-                // We update the state of the specific item that was tapped.
-                item.isChecked = value!;
+                item.isChecked = value ?? false;
               });
             },
           );

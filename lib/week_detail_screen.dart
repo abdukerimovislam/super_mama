@@ -1,51 +1,42 @@
-// --- week_detail_screen.dart ---
-
+// --- week_detail_screen.dart (Corrected) ---
 import 'package:flutter/material.dart';
-import 'pregnancy_data.dart'; // <-- Import our new data file
+import 'package:super_mama/pregnancy_data.dart';
+import 'l10n/app_localizations.dart';
 
 class WeekDetailScreen extends StatelessWidget {
-  // Instead of just a number, we now expect the whole package of weekly info.
   final PregnancyWeek weekData;
+  final AppLocalizations loc; // <-- FIX: Add this
 
-  const WeekDetailScreen({super.key, required this.weekData});
+  // --- FIX: Add 'loc' to the constructor ---
+  const WeekDetailScreen({super.key, required this.weekData, required this.loc});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        // Use the data from our object
-        title: Text('Week ${weekData.weekNumber} Details'),
+        // --- FIX: Use the 'loc' object that was passed in ---
+        title: Text('${loc.homeScreenWeek} ${weekData.weekNumber}'),
         backgroundColor: Colors.deepPurple[200],
       ),
-      body: SingleChildScrollView( // Allows scrolling if content is too long
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // The rest of your UI here, which uses 'weekData' that is already translated
             Text(
-              "What's happening in Week ${weekData.weekNumber}",
-              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.deepPurple),
+              "Baby's Development", // You can add keys for these titles too
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
-            const SizedBox(height: 20),
-            const Text(
-              "Baby's Development:",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            // Use the real data from our object!
+            const SizedBox(height: 8),
+            Text(weekData.babyDevelopment, style: const TextStyle(fontSize: 16, height: 1.5)),
+            const Divider(height: 30),
             Text(
-              weekData.babyDevelopment,
-              style: const TextStyle(fontSize: 16),
+              "Mom's Symptoms",
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
-            const SizedBox(height: 20),
-            const Text(
-              "Mom's Symptoms:",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            // Use the real data from our object!
-            Text(
-              weekData.momSymptoms,
-              style: const TextStyle(fontSize: 16),
-            ),
+            const SizedBox(height: 8),
+            Text(weekData.momSymptoms, style: const TextStyle(fontSize: 16, height: 1.5)),
           ],
         ),
       ),
