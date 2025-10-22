@@ -82,7 +82,7 @@ class WeekPageWidget extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                 decoration: BoxDecoration(
                   color: Colors.deepPurple[100],
-                  borderRadius: BorderRadius.circular(20),
+                  borderRadius: BorderRadius.circular(30),
                 ),
                 child: Text(
                   '${loc.homeScreenWeek} $weekNumber',
@@ -97,7 +97,7 @@ class WeekPageWidget extends StatelessWidget {
             Card(
               margin: const EdgeInsets.only(top: 20.0),
               elevation: 2,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
               color: Colors.deepPurple[50],
               child: Padding(
                 padding: const EdgeInsets.all(16.0),

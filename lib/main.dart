@@ -1,10 +1,9 @@
-// --- main.dart (Upgraded for Language Switching) ---
+// --- main.dart (Simplified) ---
 
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:super_mama/splash_screen.dart';
-import 'l10n/app_localizations.dart';
+import 'package:super_mama/l10n/app_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'firebase_options.dart';
 import 'package:super_mama/auth_gate.dart';
@@ -19,14 +18,10 @@ Future<void> main() async {
   runApp(const MyApp());
 }
 
-// Convert MyApp to a StatefulWidget to manage the app's locale
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
-
   @override
   State<MyApp> createState() => _MyAppState();
-
-  // This static method allows child widgets to change the app's language
   static void setLocale(BuildContext context, Locale newLocale) {
     _MyAppState? state = context.findAncestorStateOfType<_MyAppState>();
     state?.changeLanguage(newLocale);
@@ -42,38 +37,39 @@ class _MyAppState extends State<MyApp> {
     _loadLocale();
   }
 
-  // Load the saved language preference from device storage
   void _loadLocale() async {
     final prefs = await SharedPreferences.getInstance();
     String? languageCode = prefs.getString('languageCode');
     if (languageCode != null) {
-      setState(() {
-        _locale = Locale(languageCode);
-      });
+      setState(() => _locale = Locale(languageCode));
     }
   }
 
-  // This function is called by the static method to update the state
-  void changeLanguage(Locale locale) {
-    setState(() {
-      _locale = locale;
-    });
+  void changeLanguage(Locale locale) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('languageCode', locale.languageCode);
+    setState(() => _locale = locale);
   }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Bloom Mama',
+      title: 'Bloom Mama', // Or use loc.appName once context is available
       theme: ThemeData(
-        primarySwatch: Colors.deepPurple,
+        // Use pink as primary for a softer feel, or a lighter purple
+        primarySwatch: Colors.pink, // Or Colors.purple with adjustments below
+        // Define specific theme colors for more control
+        primaryColor: Colors.pink[200], // Lighter pink for AppBars
+        scaffoldBackgroundColor: Colors.white, // Keep background clean
+        // You can define colors for buttons, text, etc. here too
+        colorScheme: ColorScheme.light(
+          primary: Colors.pink[300]!,
+          secondary: Colors.deepPurple[300]!, // Use purple as accent
+      ),
         fontFamily: 'Nunito',
       ),
-
-      // The locale property tells MaterialApp which language to use.
-      // If it's null, it will use the device's default language.
       locale: _locale,
-
       localizationsDelegates: const [
         AppLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,
@@ -81,11 +77,9 @@ class _MyAppState extends State<MyApp> {
         GlobalCupertinoLocalizations.delegate,
       ],
       supportedLocales: const [
-        Locale('en'), // English
-        Locale('ru'), // Russian
-        Locale('es'), // Spanish
+        Locale('en'), Locale('ru'), Locale('es'),
       ],
-      home: const SplashScreen(),
+      home: const AuthGate(),
     );
   }
 }

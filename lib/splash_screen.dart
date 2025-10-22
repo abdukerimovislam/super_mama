@@ -1,7 +1,8 @@
-// --- splash_screen.dart (with Beating Heart Animation) ---
+// --- splash_screen.dart (Fade + Scale Animation) ---
 
 import 'package:flutter/material.dart';
-import 'package:super_mama/auth_gate.dart'; // Ensure this is the correct path to your AuthGate
+import 'package:super_mama/auth_gate.dart';
+import 'dart:async'; // Import async
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -10,51 +11,51 @@ class SplashScreen extends StatefulWidget {
   State<SplashScreen> createState() => _SplashScreenState();
 }
 
+// Change to TickerProviderStateMixin for multiple controllers if needed later
 class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderStateMixin {
-  late AnimationController _animationController;
-  late Animation<double> _animation;
-
-  int _beatCount = 0; // To track how many beats have occurred
-  static const int _maxBeats = 3; // Number of beats before navigating
+  late AnimationController _scaleController;
+  late Animation<double> _scaleAnimation;
+  double _opacity = 0.0; // Start fully transparent
+  int _beatCount = 0;
+  static const int _maxBeats = 3;
 
   @override
   void initState() {
     super.initState();
 
-    _animationController = AnimationController(
+    // Controller for the scaling (beat) effect
+    _scaleController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 400), // Duration for one pulse (half beat)
+      duration: const Duration(milliseconds: 400),
     );
 
-    // Creates a Tween that animates from 1.0 (normal size) to 1.3 (larger) and back
-    _animation = TweenSequence<double>([
+    _scaleAnimation = TweenSequence<double>([
       TweenSequenceItem(tween: Tween<double>(begin: 1.0, end: 1.3), weight: 1),
       TweenSequenceItem(tween: Tween<double>(begin: 1.3, end: 1.0), weight: 1),
-    ]).animate(
-      CurvedAnimation(
-        parent: _animationController,
-        curve: Curves.easeOut, // A gentle outward pulse
-      ),
-    );
+    ]).animate(CurvedAnimation(parent: _scaleController, curve: Curves.easeOut));
 
-    _animationController.addStatusListener((status) {
+    _scaleController.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
         _beatCount++;
         if (_beatCount < _maxBeats) {
-          _animationController.forward(from: 0.0); // Repeat the animation
+          _scaleController.forward(from: 0.0);
         } else {
-          // All beats done, navigate to the next screen
           _navigateToHome();
         }
       }
     });
 
-    _animationController.forward(); // Start the first beat
+    // Start the fade-in animation immediately
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      setState(() => _opacity = 1.0); // Animate to fully opaque
+      // Start the beating slightly after the fade begins
+      Timer(const Duration(milliseconds: 300), () {
+        if (mounted) _scaleController.forward();
+      });
+    });
   }
 
   void _navigateToHome() async {
-    // Add a small delay after the last beat before navigating,
-    // to allow the animation to fully resolve and feel natural.
     await Future.delayed(const Duration(milliseconds: 300));
     if (mounted) {
       Navigator.of(context).pushReplacement(
@@ -65,36 +66,36 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
 
   @override
   void dispose() {
-    _animationController.dispose();
+    _scaleController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.deepPurple[200], // Match your app bar color for seamless transition
+      backgroundColor: Colors.deepPurple[200],
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            ScaleTransition(
-              scale: _animation, // Apply the beating animation here
-              child: const Icon(
-                Icons.favorite, // Your logo image
-                color: Colors.white,
-                size: 100,
+        child: AnimatedOpacity(
+          opacity: _opacity, // Apply fade-in effect
+          duration: const Duration(milliseconds: 800), // Fade-in duration
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ScaleTransition(
+                scale: _scaleAnimation,
+                child: const Icon(
+                  Icons.favorite,
+                  color: Colors.white,
+                  size: 100,
+                ),
               ),
-            ),
-            const SizedBox(height: 20),
-            const Text(
-              'Bloom Mama',
-              style: TextStyle(
-                fontSize: 40,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
+              const SizedBox(height: 20),
+              const Text(
+                'Bloom Mama',
+                style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold, color: Colors.white),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

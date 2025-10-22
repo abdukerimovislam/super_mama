@@ -7,6 +7,7 @@ import 'package:super_mama/notification_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'l10n/app_localizations.dart'; // Import localizations
 import 'main.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 
 class SettingsScreen extends StatefulWidget {
@@ -19,11 +20,12 @@ class SettingsScreen extends StatefulWidget {
 class _SettingsScreenState extends State<SettingsScreen> {
   final NotificationService _notificationService = NotificationService();
   bool _affirmationsEnabled = false;
+  String _currentMode = 'pregnancy';
 
   @override
   void initState() {
     super.initState();
-    _loadNotificationPreference();
+    _loadPreferences();
   }
   // --- NEW: Helper function to get the current language name ---
   String _getCurrentLanguageName(BuildContext context) {
@@ -90,12 +92,55 @@ class _SettingsScreenState extends State<SettingsScreen> {
     Navigator.of(context).pop(); // Close the dialog
   }
 
-  Future<void> _loadNotificationPreference() async {
+  Future<void> _loadPreferences() async {
     final prefs = await SharedPreferences.getInstance();
+    final user = FirebaseAuth.instance.currentUser;
+    String? savedMode = prefs.getString('user_mode');
+
+    // If not in prefs, try loading from Firebase (needed if user logs in on new device)
+    if (savedMode == null && user != null) {
+      final doc = await FirebaseFirestore.instance.collection('user_data').doc(user.uid).get();
+      final data = doc.data() as Map<String, dynamic>?;
+      if (data != null && data.containsKey('user_mode')) {
+        savedMode = data['user_mode'];
+      }
+    }
+
     setState(() {
       _affirmationsEnabled = prefs.getBool('affirmationsEnabled') ?? false;
+      _currentMode = savedMode ?? 'pregnancy'; // Default to pregnancy if nothing found
     });
   }
+
+
+  Future<void> _onModeSwitch(String newMode) async {
+    if (newMode == _currentMode) return; // No change needed
+
+    setState(() {
+      _currentMode = newMode;
+    });
+
+    // Save preference locally
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('user_mode', newMode);
+
+    // Save preference to Firebase
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      await FirebaseFirestore.instance.collection('user_data').doc(user.uid).set({
+        'user_mode': newMode,
+      }, SetOptions(merge: true));
+    }
+
+    // IMPORTANT: Trigger a full app restart or rebuild to apply theme changes
+    // and navigate to the correct main screen. For simplicity, we'll
+    // navigate back to the AuthGate which will handle the redirection.
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(builder: (context) => const AuthGate()),
+          (route) => false,
+    );
+  }
+
 
   Future<void> _onAffirmationToggle(bool value) async {
     final loc = AppLocalizations.of(context)!; // Get localizations
@@ -158,7 +203,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
             ),
 
-          // --- NEW: Language Switcher Tile ---
+          // --- NEW: Mode Switcher Section ---
           ListTile(
             leading: const Icon(Icons.language),
             title: Text(loc.settingsLanguage),

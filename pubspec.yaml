@@ -47,7 +47,11 @@ dependencies:
   flutter_local_notifications: ^19.0.0
   timezone: ^0.10.1
   shared_preferences: ^2.5.3
+  flutter_native_splash: ^2.4.7
+  table_calendar: ^3.2.0
 
+flutter_native_splash:
+    color: "#B39DDB"
 
 
 
@@ -55,11 +59,11 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^5.0.0
-  flutter_native_splash: ^2.4.0
 
-flutter_native_splash:
-  # This color will be the background of your native splash screen.
-  color: "#B39DDB"
+
+
+
+
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is

@@ -1,25 +1,24 @@
-// --- auth_gate.dart ---
+// --- auth_gate.dart (Simplified) ---
 
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'login_screen.dart';
-import 'main_navigator.dart';
+import 'package:super_mama/login_screen.dart';
+import 'package:super_mama/main_navigator.dart';
 
 class AuthGate extends StatelessWidget {
   const AuthGate({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // StreamBuilder listens for changes in the authentication state
     return StreamBuilder<User?>(
       stream: FirebaseAuth.instance.authStateChanges(),
       builder: (context, snapshot) {
-        // If the snapshot has no data, it means the user is not logged in yet.
+        // User is not logged in
         if (!snapshot.hasData) {
           return const LoginScreen();
         }
 
-        // If there is data, it means the user is logged in.
+        // User is logged in, go directly to the main pregnancy app
         return const MainNavigator();
       },
     );
