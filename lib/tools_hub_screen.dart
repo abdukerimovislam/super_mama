@@ -5,6 +5,7 @@ import 'package:super_mama/contraction_timer_screen.dart';
 import 'package:super_mama/kick_counter_screen.dart';
 import 'package:super_mama/l10n/app_localizations.dart';
 
+
 class ToolsHubScreen extends StatelessWidget {
   const ToolsHubScreen({super.key});
 
@@ -14,7 +15,7 @@ class ToolsHubScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("Pregnancy Tools"), // Localize
+        title: Text(loc.toolsHubTitle), // Localize
         backgroundColor: Colors.deepPurple[200],
       ),
       body: ListView(

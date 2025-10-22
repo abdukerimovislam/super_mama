@@ -2319,6 +2319,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'ready to meet you!'**
   String get babySizeReady;
+
+  /// No description provided for @toolsHubTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Pregnancy Tools'**
+  String get toolsHubTitle;
 }
 
 class _AppLocalizationsDelegate

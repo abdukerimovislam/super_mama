@@ -44,8 +44,18 @@ class _MainNavigatorState extends State<MainNavigator> {
     final loc = AppLocalizations.of(context)!;
 
     return Scaffold(
-      body: Center(
-        child: _screens.elementAt(_selectedIndex),
+      body: AnimatedSwitcher(
+        duration: const Duration(milliseconds: 300), // Duration of the fade
+        transitionBuilder: (Widget child, Animation<double> animation) {
+          // Use FadeTransition for the effect
+          return FadeTransition(opacity: animation, child: child);
+        },
+        // The child is the currently selected screen
+        // The key ensures AnimatedSwitcher recognizes when the child changes
+        child: KeyedSubtree(
+          key: ValueKey<int>(_selectedIndex), // Use index as the key
+          child: _screens.elementAt(_selectedIndex),
+        ),
       ),
       bottomNavigationBar: BottomNavigationBar(
         // This list contains all 6 icons for your navigation bar.

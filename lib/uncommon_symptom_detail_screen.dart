@@ -15,6 +15,7 @@ class UncommonSymptomDetailScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
         title: Text(loc.uncommonSymptomDetailTitle), // <-- Localized
         backgroundColor: Colors.deepPurple[200],
       ),

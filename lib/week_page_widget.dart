@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:super_mama/pregnancy_data.dart';
 import 'package:super_mama/week_detail_screen.dart';
 import 'l10n/app_localizations.dart'; // Import localizations
+import 'fade_page_route.dart';
 
 class WeekPageWidget extends StatelessWidget {
   final int weekNumber;
@@ -75,7 +76,8 @@ class WeekPageWidget extends StatelessWidget {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => WeekDetailScreen(weekData: dataForWeek, loc: loc)),
+                  // Pass the widget directly to 'child'
+                  FadePageRoute(child: WeekDetailScreen(weekData: dataForWeek, loc: loc)),
                 );
               },
               child: Container(

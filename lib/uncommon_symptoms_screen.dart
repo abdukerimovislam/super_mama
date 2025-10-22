@@ -62,6 +62,7 @@ class _UncommonSymptomsScreenState extends State<UncommonSymptomsScreen> {
 
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
         title: Text(loc.isItNormalTitle), // <-- Localized
         backgroundColor: Colors.deepPurple[200],
       ),

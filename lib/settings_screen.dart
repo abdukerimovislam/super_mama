@@ -182,6 +182,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
         title: Text(loc.settingsTitle), // <-- Localized
         backgroundColor: Colors.deepPurple[200],
       ),

@@ -104,6 +104,7 @@ class _JournalScreenState extends State<JournalScreen> {
 
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
         title: Text(loc.journalTitle), // <-- Localized
         backgroundColor: Colors.deepPurple[200],
         actions: [

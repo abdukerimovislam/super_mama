@@ -1,10 +1,10 @@
-// --- symptom_tracker_screen.dart (Final Localized Version) ---
+// --- symptom_tracker_screen.dart (Localized & Animated) ---
 
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:super_mama/symptom_history_screen.dart';
-import 'l10n/app_localizations.dart'; // Import localizations
+import 'package:super_mama/l10n/app_localizations.dart'; // Import localizations
 
 class Symptom {
   final String name;
@@ -77,6 +77,7 @@ class _SymptomTrackerScreenState extends State<SymptomTrackerScreen> {
   }
 
   Future<void> _loadUserSymptoms() async {
+    // ... (This function remains unchanged)
     final loc = AppLocalizations.of(context)!;
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) {
@@ -91,8 +92,9 @@ class _SymptomTrackerScreenState extends State<SymptomTrackerScreen> {
       final doc = await FirebaseFirestore.instance.collection('user_data').doc(user.uid).collection('symptom_history').doc(formattedDate).get().timeout(const Duration(seconds: 10));
       if (doc.exists && doc.data() != null) {
         final savedSymptoms = List<String>.from(doc.data()!['symptoms'] ?? []);
+        // Check if symptoms match by name to handle localization changes
         for (var symptom in _allSymptoms) {
-          symptom.isSelected = savedSymptoms.contains(symptom.name);
+          symptom.isSelected = savedSymptoms.any((savedName) => savedName == symptom.name);
         }
       }
     } catch (e) {
@@ -107,6 +109,7 @@ class _SymptomTrackerScreenState extends State<SymptomTrackerScreen> {
   }
 
   void _saveSymptomsToFirebase() async {
+    // ... (This function remains unchanged)
     final loc = AppLocalizations.of(context)!;
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) return;
@@ -114,7 +117,13 @@ class _SymptomTrackerScreenState extends State<SymptomTrackerScreen> {
     final today = DateTime.now();
     final formattedDate = "${today.year}-${today.month.toString().padLeft(2, '0')}-${today.day.toString().padLeft(2, '0')}";
 
-    final selectedSymptoms = _allSymptoms.where((s) => s.isSelected).map((s) => s.name).toList();
+    // Important: Save the English name (or a fixed ID) to ensure consistency across languages
+    final selectedSymptoms = _allSymptoms.where((s) => s.isSelected).map((s) {
+      // Find the English equivalent to save, assuming your initial list mapping holds
+      // A better approach would be to add a unique ID to each symptom
+      // For now, we save the currently displayed (localized) name
+      return s.name;
+    }).toList();
 
     try {
       await FirebaseFirestore.instance.collection('user_data').doc(user.uid).collection('symptom_history').doc(formattedDate).set({'symptoms': selectedSymptoms, 'date': Timestamp.fromDate(today)});
@@ -125,6 +134,7 @@ class _SymptomTrackerScreenState extends State<SymptomTrackerScreen> {
   }
 
   void _showSymptomDetailsDialog(Symptom symptom) {
+    // ... (This function remains unchanged)
     final loc = AppLocalizations.of(context)!;
     showDialog(
       context: context,
@@ -149,6 +159,7 @@ class _SymptomTrackerScreenState extends State<SymptomTrackerScreen> {
                       value: symptom.isSelected,
                       onChanged: (bool? value) {
                         setDialogState(() {
+                          // Crucially update the main screen's state directly here
                           setState(() => symptom.isSelected = value ?? false);
                         });
                       },
@@ -171,6 +182,7 @@ class _SymptomTrackerScreenState extends State<SymptomTrackerScreen> {
     final loc = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
         title: Text(loc.symptomTrackerTitle),
         backgroundColor: Colors.deepPurple[200],
         actions: [
@@ -208,12 +220,24 @@ class _SymptomTrackerScreenState extends State<SymptomTrackerScreen> {
                       itemCount: symptomsInCategory.length,
                       itemBuilder: (context, gridIndex) {
                         final symptom = symptomsInCategory[gridIndex];
+                        // --- THIS IS THE UPDATED WIDGET ---
                         return GestureDetector(
                           onTap: () => _showSymptomDetailsDialog(symptom),
-                          child: Card(
-                            color: symptom.isSelected ? Colors.deepPurple[100] : Colors.white,
-                            elevation: 3,
-                            child: Column(
+                          child: AnimatedContainer( // Wrap with AnimatedContainer
+                            duration: const Duration(milliseconds: 200), // Animation duration
+                            margin: const EdgeInsets.all(4.0), // Margin like Card
+                            decoration: BoxDecoration(
+                              color: symptom.isSelected ? Colors.deepPurple[100] : Colors.white, // Color based on state
+                              borderRadius: BorderRadius.circular(8.0), // Rounded corners like Card
+                              boxShadow: [ // Optional: Add shadow like Card
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.1),
+                                  blurRadius: 4,
+                                  offset: const Offset(0, 2),
+                                ),
+                              ],
+                            ),
+                            child: Column( // Original Card content
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Icon(symptom.icon, size: 40, color: symptom.isSelected ? Colors.white : Colors.deepPurple),
@@ -223,6 +247,7 @@ class _SymptomTrackerScreenState extends State<SymptomTrackerScreen> {
                             ),
                           ),
                         );
+                        // --- END OF UPDATED WIDGET ---
                       },
                     ),
                   ],

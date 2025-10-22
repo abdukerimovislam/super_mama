@@ -1326,4 +1326,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get babySizeReady => 'ready to meet you!';
+
+  @override
+  String get toolsHubTitle => 'Pregnancy Tools';
 }

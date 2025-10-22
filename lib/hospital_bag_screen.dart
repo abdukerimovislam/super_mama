@@ -54,6 +54,7 @@ class _HospitalBagScreenState extends State<HospitalBagScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
         // Use the localized title
         title: Text(AppLocalizations.of(context)!.checklistTitle),
         backgroundColor: Colors.deepPurple[200],

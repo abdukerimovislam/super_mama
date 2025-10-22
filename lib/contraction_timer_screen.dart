@@ -81,6 +81,7 @@ class _ContractionTimerScreenState extends State<ContractionTimerScreen> {
 
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
         title: Text(loc.contractionTimerTitle), // <-- Localized
         backgroundColor: Colors.deepPurple[200],
         actions: [

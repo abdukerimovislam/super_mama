@@ -1,12 +1,11 @@
-// --- home_screen.dart (Corrected) ---
+// --- home_screen.dart (Fully Localized with Background Image) ---
 
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'l10n/app_localizations.dart';
 import 'package:super_mama/settings_screen.dart';
 import 'package:super_mama/week_page_widget.dart';
-import 'package:super_mama/pregnancy_data.dart';
+import 'package:super_mama/l10n/app_localizations.dart'; // Import the localizations
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -47,6 +46,7 @@ class _HomeScreenState extends State<HomeScreen> {
         if (mounted) {
           setState(() {
             _lmpDate = savedDate;
+            // No need to call update here, it will be called in build
           });
         }
       }
@@ -115,7 +115,7 @@ class _HomeScreenState extends State<HomeScreen> {
     final loc = AppLocalizations.of(context)!;
 
     if (_lmpDate != null) {
-      _updateAndAnimate(_lmpDate!, isInitialLoad: !_pageController.hasClients || _pageController.page == 0);
+      _updateAndAnimate(_lmpDate!, isInitialLoad: !_pageController.hasClients || (_pageController.positions.isNotEmpty && _pageController.page == 0));
     }
 
     return Scaffold(
@@ -142,80 +142,106 @@ class _HomeScreenState extends State<HomeScreen> {
           IconButton(
             icon: const Icon(Icons.settings_outlined),
             tooltip: loc.settingsTitle,
-            onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => const SettingsScreen())),
+            onPressed: () => Navigator.of(context).push(FadePageRoute(child: const SettingsScreen())), // Assuming FadePageRoute exists
           ),
         ],
       ),
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : Column(
-        children: [
-          const SizedBox(height: 20),
-          Expanded(
-            child: PageView.builder(
-              controller: _pageController,
-              itemCount: 40,
-              itemBuilder: (context, index) {
-                final weekNumber = index + 1;
-                return AnimatedBuilder(
-                  animation: _pageController,
-                  builder: (context, child) {
-                    double value = 1.0;
-                    if (_pageController.position.haveDimensions) {
-                      value = (_pageController.page! - index).abs();
-                      value = (1 - (value * 0.25)).clamp(0.0, 1.0);
-                    }
-                    return Center(
-                      child: SizedBox(
-                        height: Curves.easeInOut.transform(value) * 500,
-                        child: child,
-                      ),
-                    );
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                    // --- THE FIX IS HERE: Pass the 'loc' object ---
-                    child: WeekPageWidget(weekNumber: weekNumber, loc: loc),
-                  ),
-                );
-              },
-            ),
+      // Apply the background image using a Container
+      body: Container(
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage("assets/images/background_main.jpg"), // Ensure this path is correct
+            fit: BoxFit.cover,
+            // Optional: Adjust opacity
+            // colorFilter: ColorFilter.mode(
+            //   Colors.white.withOpacity(0.8),
+            //   BlendMode.dstATop,
+            // ),
           ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 10.0),
-            child: _lmpDate == null
-                ? ElevatedButton(
-              onPressed: () => _selectLMP(context),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.white,
-                foregroundColor: Colors.deepPurple,
-                elevation: 2,
-                side: BorderSide(color: Colors.deepPurple.shade100),
-                padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+        ),
+        child: _isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : Column( // This Column is now the child of the Container
+          children: [
+            const SizedBox(height: 20),
+            Expanded(
+              child: PageView.builder(
+                controller: _pageController,
+                itemCount: 40,
+                itemBuilder: (context, index) {
+                  final weekNumber = index + 1;
+                  return AnimatedBuilder(
+                    animation: _pageController,
+                    builder: (context, child) {
+                      double value = 1.0;
+                      if (_pageController.position.haveDimensions) {
+                        value = (_pageController.page! - index).abs();
+                        value = (1 - (value * 0.25)).clamp(0.0, 1.0);
+                      }
+                      return Center(
+                        child: SizedBox(
+                          height: Curves.easeInOut.transform(value) * 500,
+                          child: child,
+                        ),
+                      );
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      child: WeekPageWidget(weekNumber: weekNumber, loc: loc),
+                    ),
+                  );
+                },
               ),
-              child: Text(loc.homeScreenSetLMP),
-            )
-                : Column(
-              children: [
-                ElevatedButton.icon(
-                  icon: const Icon(Icons.my_location),
-                  label: Text(loc.homeScreenGoToMyWeek(_currentWeek ?? 0)),
-                  onPressed: _goToCurrentWeek,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.deepPurple[400],
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-                  ),
-                ),
-                TextButton(
-                  onPressed: () => _selectLMP(context),
-                  child: Text(loc.homeScreenChangeDate),
-                ),
-              ],
             ),
-          ),
-        ],
+            Padding( // Button Section
+              padding: const EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 10.0),
+              child: _lmpDate == null
+                  ? ElevatedButton(
+                onPressed: () => _selectLMP(context),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.white,
+                  foregroundColor: Colors.deepPurple,
+                  elevation: 2,
+                  side: BorderSide(color: Colors.deepPurple.shade100),
+                  padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                ),
+                child: Text(loc.homeScreenSetLMP),
+              )
+                  : Column(
+                children: [
+                  ElevatedButton.icon(
+                    icon: const Icon(Icons.my_location),
+                    label: Text(loc.homeScreenGoToMyWeek(_currentWeek ?? 0)),
+                    onPressed: _goToCurrentWeek,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.deepPurple[400],
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () => _selectLMP(context),
+                    child: Text(loc.homeScreenChangeDate),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
+}
+
+// You need to ensure the FadePageRoute class exists in your project
+class FadePageRoute<T> extends PageRouteBuilder<T> {
+  final Widget child;
+  FadePageRoute({required this.child})
+      : super(
+    pageBuilder: (context, animation, secondaryAnimation) => child,
+    transitionsBuilder: (context, animation, secondaryAnimation, page) {
+      return FadeTransition(opacity: animation, child: page);
+    },
+    transitionDuration: const Duration(milliseconds: 300),
+  );
 }

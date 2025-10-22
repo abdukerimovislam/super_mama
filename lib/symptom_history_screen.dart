@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
 import 'l10n/app_localizations.dart'; // Import the localizations
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 
 class SymptomLog {
   final DateTime date;
@@ -54,7 +55,9 @@ class _SymptomHistoryScreenState extends State<SymptomHistoryScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(loc.symptomHistoryTitle), // <-- Localized
+        centerTitle: true,
+        title: Text(
+            loc.symptomHistoryTitle,), // <-- Localized
         backgroundColor: Colors.deepPurple[200],
       ),
       body: FutureBuilder<List<SymptomLog>>(
@@ -72,24 +75,38 @@ class _SymptomHistoryScreenState extends State<SymptomHistoryScreen> {
 
           final history = snapshot.data!;
 
-          return ListView.builder(
-            padding: const EdgeInsets.all(8.0),
-            itemCount: history.length,
-            itemBuilder: (context, index) {
-              final log = history[index];
-              return Card(
-                margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                child: ListTile(
-                  title: Text(
-                    // This will now format the date based on the user's language
-                    DateFormat.yMMMMd(Localizations.localeOf(context).toString()).format(log.date),
-                    style: const TextStyle(fontWeight: FontWeight.bold),
+          // --- WRAP ListView.builder with AnimationLimiter ---
+          return AnimationLimiter(
+            child: ListView.builder(
+              padding: const EdgeInsets.all(8.0),
+              itemCount: history.length,
+              itemBuilder: (context, index) {
+                final log = history[index];
+                // --- WRAP EACH ITEM ---
+                return AnimationConfiguration.staggeredList(
+                  position: index,
+                  duration: const Duration(milliseconds: 375), // Animation duration
+                  child: SlideAnimation( // Slide effect
+                    verticalOffset: 50.0,
+                    child: FadeInAnimation( // Fade effect
+                      child: Card( // Your original list item
+                        margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                        child: ListTile(
+                          title: Text(
+                            DateFormat.yMMMMd(Localizations.localeOf(context).toString()).format(log.date),
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          subtitle: Text(log.symptoms.join(', ')),
+                        ),
+                      ),
+                    ),
                   ),
-                  subtitle: Text(log.symptoms.join(', ')),
-                ),
-              );
-            },
+                );
+                // --- END ITEM WRAPPER ---
+              },
+            ),
           );
+          // --- END AnimationLimiter WRAPPER ---
         },
       ),
     );

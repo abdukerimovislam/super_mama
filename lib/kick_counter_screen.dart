@@ -91,6 +91,7 @@ class _KickCounterScreenState extends State<KickCounterScreen> {
 
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
         title: Text(loc.kickCounterTitle), // <-- Localized
         backgroundColor: Colors.deepPurple[200],
         actions: [

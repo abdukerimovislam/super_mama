@@ -1335,4 +1335,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get babySizeReady => 'готов к встрече с вами!';
+
+  @override
+  String get toolsHubTitle => 'Инструменты для беременности';
 }
