@@ -50,6 +50,18 @@ dependencies:
   flutter_native_splash: ^2.4.7
   table_calendar: ^3.2.0
   flutter_staggered_animations: ^1.1.1
+  flutter_launcher_icons: ^0.14.4
+
+flutter_icons:
+  android: true
+  image_path: "assets/images/app_icon1.png"
+  adaptive_icon_background: "#ffffff"
+  adaptive_icon_foreground: "assets/images/app_icon3.png"
+
+
+
+
+
 
 flutter_native_splash:
     color: "#B39DDB"
