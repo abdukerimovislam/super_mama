@@ -3,9 +3,9 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:super_mama/settings_screen.dart';
-import 'package:super_mama/week_page_widget.dart';
-import 'package:super_mama/l10n/app_localizations.dart'; // Import the localizations
+import 'package:bloom_mama/settings_screen.dart';
+import 'package:bloom_mama/week_page_widget.dart';
+import 'package:bloom_mama/l10n/app_localizations.dart'; // Import the localizations
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});

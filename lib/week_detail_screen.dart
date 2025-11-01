@@ -1,6 +1,6 @@
 // --- week_detail_screen.dart (Corrected) ---
 import 'package:flutter/material.dart';
-import 'package:super_mama/pregnancy_data.dart';
+import 'package:bloom_mama/pregnancy_data.dart';
 import 'l10n/app_localizations.dart';
 
 class WeekDetailScreen extends StatelessWidget {

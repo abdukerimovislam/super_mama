@@ -1,7 +1,7 @@
 // --- splash_screen.dart (Fade + Scale Animation) ---
 
 import 'package:flutter/material.dart';
-import 'package:super_mama/auth_gate.dart';
+import 'package:bloom_mama/auth_gate.dart';
 import 'dart:async'; // Import async
 
 class SplashScreen extends StatefulWidget {

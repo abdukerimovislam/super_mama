@@ -3,7 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:super_mama/main_navigator.dart';
+import 'package:bloom_mama/main_navigator.dart';
 import 'l10n/app_localizations.dart'; // Import the localizations
 
 class LoginScreen extends StatelessWidget {

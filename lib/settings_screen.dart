@@ -2,8 +2,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:super_mama/auth_gate.dart';
-import 'package:super_mama/notification_service.dart';
+import 'package:bloom_mama/auth_gate.dart';
+import 'package:bloom_mama/notification_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'l10n/app_localizations.dart'; // Import localizations
 import 'main.dart';

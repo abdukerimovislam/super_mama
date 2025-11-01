@@ -3,11 +3,11 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:super_mama/l10n/app_localizations.dart';
+import 'package:bloom_mama/l10n/app_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'firebase_options.dart';
-import 'package:super_mama/auth_gate.dart';
-import 'package:super_mama/notification_service.dart';
+import 'package:bloom_mama/auth_gate.dart';
+import 'package:bloom_mama/notification_service.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();

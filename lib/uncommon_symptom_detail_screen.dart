@@ -1,7 +1,7 @@
 // --- uncommon_symptom_detail_screen.dart ---
 
 import 'package:flutter/material.dart';
-import 'package:super_mama/uncommon_symptoms_screen.dart'; // Import to get the Symptom class
+import 'package:bloom_mama/uncommon_symptoms_screen.dart'; // Import to get the Symptom class
 import 'l10n/app_localizations.dart'; // Import the localizations
 
 class UncommonSymptomDetailScreen extends StatelessWidget {

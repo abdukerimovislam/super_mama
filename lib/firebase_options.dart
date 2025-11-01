@@ -26,10 +26,7 @@ class DefaultFirebaseOptions {
       case TargetPlatform.android:
         return android;
       case TargetPlatform.iOS:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for ios - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return ios;
       case TargetPlatform.macOS:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for macos - '
@@ -54,9 +51,21 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyDnpMDXeJe81jNyratbFj90YUUakg42v50',
-    appId: '1:651153251065:android:7e33fd1f09f80923b0a028',
+    appId: '1:651153251065:android:793a72384acdc139b0a028',
     messagingSenderId: '651153251065',
     projectId: 'bloom-mama',
     storageBucket: 'bloom-mama.firebasestorage.app',
   );
+
+  static const FirebaseOptions ios = FirebaseOptions(
+    apiKey: 'AIzaSyDPFO9w80ZAfJT89-mhN5q4n8iy7RdaWD0',
+    appId: '1:651153251065:ios:428ff18ff21fb708b0a028',
+    messagingSenderId: '651153251065',
+    projectId: 'bloom-mama',
+    storageBucket: 'bloom-mama.firebasestorage.app',
+    androidClientId: '651153251065-0casuitp6knl7drlclftr3bfuh6sj86s.apps.googleusercontent.com',
+    iosClientId: '651153251065-rsu4tbe6df7ejldbp5okiusn7imq3evf.apps.googleusercontent.com',
+    iosBundleId: 'com.example.bloomMama',
+  );
+
 }

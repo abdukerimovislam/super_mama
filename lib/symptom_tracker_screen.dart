@@ -3,8 +3,8 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:super_mama/symptom_history_screen.dart';
-import 'package:super_mama/l10n/app_localizations.dart'; // Import localizations
+import 'package:bloom_mama/symptom_history_screen.dart';
+import 'package:bloom_mama/l10n/app_localizations.dart'; // Import localizations
 
 class Symptom {
   final String name;

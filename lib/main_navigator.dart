@@ -1,13 +1,13 @@
 // --- main_navigator.dart (Corrected) ---
 
 import 'package:flutter/material.dart';
-import 'package:super_mama/contraction_timer_screen.dart';
-import 'package:super_mama/home_screen.dart';
-import 'package:super_mama/hospital_bag_screen.dart';
-import 'package:super_mama/kick_counter_screen.dart';
-import 'package:super_mama/symptom_tracker_screen.dart';
-import 'package:super_mama/uncommon_symptoms_screen.dart';
-import 'package:super_mama/journal_screen.dart';
+import 'package:bloom_mama/contraction_timer_screen.dart';
+import 'package:bloom_mama/home_screen.dart';
+import 'package:bloom_mama/hospital_bag_screen.dart';
+import 'package:bloom_mama/kick_counter_screen.dart';
+import 'package:bloom_mama/symptom_tracker_screen.dart';
+import 'package:bloom_mama/uncommon_symptoms_screen.dart';
+import 'package:bloom_mama/journal_screen.dart';
 import 'l10n/app_localizations.dart';
 import 'tools_hub_screen.dart';
 

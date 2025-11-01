@@ -1,9 +1,9 @@
 // --- tools_hub_screen.dart ---
 
 import 'package:flutter/material.dart';
-import 'package:super_mama/contraction_timer_screen.dart';
-import 'package:super_mama/kick_counter_screen.dart';
-import 'package:super_mama/l10n/app_localizations.dart';
+import 'package:bloom_mama/contraction_timer_screen.dart';
+import 'package:bloom_mama/kick_counter_screen.dart';
+import 'package:bloom_mama/l10n/app_localizations.dart';
 
 
 class ToolsHubScreen extends StatelessWidget {

@@ -1,7 +1,7 @@
 // --- uncommon_symptoms_screen.dart ---
 
 import 'package:flutter/material.dart';
-import 'package:super_mama/uncommon_symptom_detail_screen.dart';
+import 'package:bloom_mama/uncommon_symptom_detail_screen.dart';
 import 'l10n/app_localizations.dart'; // Import localizations
 
 // Data model is unchanged
